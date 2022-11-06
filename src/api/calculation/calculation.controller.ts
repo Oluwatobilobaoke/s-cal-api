@@ -12,6 +12,7 @@ import {
 
 import { CalculationService } from './calculation.service';
 import { Request } from 'express';
+import { CalculationDto } from './calculation.dto';
 
 @Controller('calculation')
 export class CalculationController {
@@ -20,7 +21,10 @@ export class CalculationController {
 
   @Post('')
   @UseInterceptors(ClassSerializerInterceptor)
-  private calculate(@Body() body: any, @Req() req: Request): Promise<any> {
+  private calculate(
+    @Body() body: CalculationDto,
+    @Req() req: Request,
+  ): Promise<string> {
     console.log('requser', req.user);
 
     return this.service.calculate(body, req);

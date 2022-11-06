@@ -16,21 +16,25 @@ export class CalculationService {
   constructor(private readonly supabase: Supabase) {}
 
   public async calculate(body: CalculationDto, req: Request): Promise<string> {
-    const { expression }: CalculationDto = body;
+    try {
+      const { expression }: CalculationDto = body;
 
-    const response = calculator(expression);
-    const user = req.user;
+      const response = calculator(expression);
+      const user = req.user;
 
-    // @ts-ignore
-    const calculation: Calculation = new Calculation();
+      // @ts-ignore
+      const calculation: Calculation = new Calculation();
 
-    // @ts-ignore
-    calculation.user_id = String(user.sub);
-    calculation.expression = expression;
-    calculation.result = response;
+      // @ts-ignore
+      calculation.user_id = String(user.sub);
+      calculation.expression = expression;
+      calculation.result = response;
 
-    this.repository.save(calculation);
-    return calculation.result;
+      this.repository.save(calculation);
+      return calculation.result;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   public async findOne(id: number): Promise<Calculation> {
